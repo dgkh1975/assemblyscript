@@ -82,3 +82,18 @@ function testField(): void {
   assert(fieldInst.fieldFunc()(1) == 25);
 }
 testField();
+
+export function semanticallyAnonymous(): void {
+  function fnDecl(val: i32): i32 {
+    return val;
+  }
+  const exprDecl = function fnDecl(val: i64): i64 { // must not shadow
+    return val;
+  };
+  assert(fnDecl != exprDecl);
+}
+semanticallyAnonymous();
+
+var duplicateParams = (a: i32, a: i32): void => {};
+// TS2300: Duplicate identifier 'a'
+duplicateParams(1, 2);

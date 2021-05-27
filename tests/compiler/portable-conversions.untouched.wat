@@ -2,21 +2,22 @@
  (type $none_=>_none (func))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
- (memory $0 1)
- (data (i32.const 12) "L\00\00\00\01\00\00\00\00\00\00\00\01\00\00\00.\00\00\00p\00o\00r\00t\00a\00b\00l\00e\00-\00c\00o\00n\00v\00e\00r\00s\00i\00o\00n\00s\00.\00t\00s\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
- (table $0 1 funcref)
  (global $portable-conversions/i (mut i32) (i32.const 1))
  (global $portable-conversions/I (mut i64) (i64.const 1))
  (global $portable-conversions/f (mut f32) (f32.const 1))
  (global $portable-conversions/F (mut f64) (f64.const 1))
+ (global $~lib/memory/__data_end i32 (i32.const 92))
+ (global $~lib/memory/__stack_pointer (mut i32) (i32.const 16476))
+ (global $~lib/memory/__heap_base i32 (i32.const 16476))
+ (memory $0 1)
+ (data (i32.const 12) "L\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00.\00\00\00p\00o\00r\00t\00a\00b\00l\00e\00-\00c\00o\00n\00v\00e\00r\00s\00i\00o\00n\00s\00.\00t\00s\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
+ (table $0 1 funcref)
+ (elem $0 (i32.const 1))
  (export "memory" (memory $0))
  (start $~start)
  (func $start:portable-conversions
   global.get $portable-conversions/i
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.eqz
   if
    i32.const 0
@@ -28,10 +29,7 @@
   end
   global.get $portable-conversions/I
   i32.wrap_i64
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.eqz
   if
    i32.const 0
@@ -43,10 +41,7 @@
   end
   global.get $portable-conversions/f
   i32.trunc_f32_s
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.eqz
   if
    i32.const 0
@@ -58,10 +53,7 @@
   end
   global.get $portable-conversions/F
   i32.trunc_f64_s
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.eqz
   if
    i32.const 0
@@ -72,10 +64,7 @@
    unreachable
   end
   global.get $portable-conversions/i
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.eqz
   if
    i32.const 0
@@ -87,10 +76,7 @@
   end
   global.get $portable-conversions/I
   i32.wrap_i64
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.eqz
   if
    i32.const 0
@@ -102,10 +88,7 @@
   end
   global.get $portable-conversions/f
   i32.trunc_f32_s
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.eqz
   if
    i32.const 0
@@ -117,10 +100,7 @@
   end
   global.get $portable-conversions/F
   i32.trunc_f64_s
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.eqz
   if
    i32.const 0

@@ -129,6 +129,31 @@ export function setLowMemoryLimit(options: Options, lowMemoryLimit: i32): void {
   options.lowMemoryLimit = lowMemoryLimit;
 }
 
+/** Sets the `exportRuntime` option. */
+export function setExportRuntime(options: Options, exportRuntime: bool): void {
+  options.exportRuntime = exportRuntime;
+}
+
+/** Default stack size. */
+export const DEFAULT_STACK_SIZE = 16384;
+
+/** Sets the `stackSize` option. */
+export function setStackSize(options: Options, stackSize: i32): void {
+  options.stackSize = stackSize;
+}
+
+/** Sets the bundle semantic version. */
+export function setBundleVersion(
+  options: Options,
+  bundleMajorVersion: i32,
+  bundleMinorVersion: i32,
+  bundlePatchVersion: i32,
+): void {
+  options.bundleMajorVersion = bundleMajorVersion;
+  options.bundleMinorVersion = bundleMinorVersion;
+  options.bundlePatchVersion = bundlePatchVersion;
+}
+
 /** Sign extension operations. */
 export const FEATURE_SIGN_EXTENSION = Feature.SIGN_EXTENSION;
 /** Mutable global imports and exports. */
@@ -274,10 +299,6 @@ export * from "./program";
 export * from "./resolver";
 export * from "./tokenizer";
 export * from "./types";
-// TODO: When vTables are pulled, perhaps it would be better to extend an ASTWalker
 export * from "./extra/ast";
 import * as util from "./util/index";
 export { util };
-
-// TODO: compat with 0.9, remove with 0.10
-export * from "./util/index";

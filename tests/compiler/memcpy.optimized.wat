@@ -1,13 +1,14 @@
 (module
- (type $none_=>_none (func))
- (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+ (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
+ (type $none_=>_none (func))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
- (memory $0 1)
- (data (i32.const 1036) ",\00\00\00\01\00\00\00\00\00\00\00\01\00\00\00\12\00\00\00m\00e\00m\00c\00p\00y\00.\00t\00s")
  (global $memcpy/dest (mut i32) (i32.const 0))
- (export "memory" (memory $0))
+ (memory $0 1)
+ (data (i32.const 1036) ",")
+ (data (i32.const 1048) "\01\00\00\00\12\00\00\00m\00e\00m\00c\00p\00y\00.\00t\00s")
  (export "memcpy" (func $memcpy/memcpy))
+ (export "memory" (memory $0))
  (start $~start)
  (func $memcpy/memcpy (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
@@ -770,7 +771,7 @@
   end
   local.get $5
  )
- (func $start:memcpy
+ (func $~start
   i32.const 8
   i64.const 1229782938247303441
   i64.store
@@ -945,8 +946,5 @@
    call $~lib/builtins/abort
    unreachable
   end
- )
- (func $~start
-  call $start:memcpy
  )
 )

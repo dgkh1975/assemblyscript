@@ -1,12 +1,16 @@
 (module
  (type $i32_=>_i32 (func (param i32) (result i32)))
- (type $none_=>_none (func))
  (type $i64_=>_i64 (func (param i64) (result i64)))
+ (type $none_=>_none (func))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
+ (global $~lib/memory/__data_end i32 (i32.const 76))
+ (global $~lib/memory/__stack_pointer (mut i32) (i32.const 16460))
+ (global $~lib/memory/__heap_base i32 (i32.const 16460))
  (memory $0 1)
- (data (i32.const 12) "<\00\00\00\01\00\00\00\00\00\00\00\01\00\00\00 \00\00\00s\00t\00d\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s\00\00\00\00\00\00\00\00\00\00\00\00\00")
+ (data (i32.const 12) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00 \00\00\00s\00t\00d\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s\00\00\00\00\00\00\00\00\00\00\00\00\00")
  (table $0 1 funcref)
+ (elem $0 (i32.const 1))
  (export "memory" (memory $0))
  (start $~start)
  (func $~lib/polyfills/bswap<u8> (param $0 i32) (result i32)
@@ -82,14 +86,11 @@
   i32.and
   i32.shl
   local.get $0
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const 8
   i32.const 15
   i32.and
-  i32.shr_s
+  i32.shr_u
   i32.const 255
   i32.and
   i32.or
@@ -390,14 +391,11 @@
   i32.and
   i32.shl
   local.get $0
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const 8
   i32.const 15
   i32.and
-  i32.shr_s
+  i32.shr_u
   i32.const 255
   i32.and
   i32.or
@@ -463,7 +461,7 @@
   i32.and
   local.get $0
   i32.const 8
-  i32.shr_s
+  i32.shr_u
   i32.const 255
   i32.and
   i32.or
@@ -491,15 +489,9 @@
   end
   i32.const 170
   call $~lib/polyfills/bswap<i8>
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const 170
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.eq
   i32.eqz
   if
@@ -527,15 +519,9 @@
   end
   i32.const 43707
   call $~lib/polyfills/bswap<i16>
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const 48042
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.eq
   i32.eqz
   if
@@ -641,15 +627,9 @@
   end
   i32.const 170
   call $~lib/polyfills/bswap16<i8>
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const 170
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.eq
   i32.eqz
   if
@@ -677,15 +657,9 @@
   end
   i32.const 43707
   call $~lib/polyfills/bswap16<i16>
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const 48042
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.eq
   i32.eqz
   if

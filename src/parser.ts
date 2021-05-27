@@ -29,6 +29,7 @@ import {
 } from "./diagnostics";
 
 import {
+  CharCode,
   normalizePath
 } from "./util";
 
@@ -135,7 +136,7 @@ export class Parser extends DiagnosticEmitter {
   ): void {
     // the frontend gives us paths with file extensions
     var normalizedPath = normalizePath(path);
-    var internalPath = mangleInternalPath(path);
+    var internalPath = mangleInternalPath(normalizedPath);
 
     // check if already processed
     if (this.donelog.has(internalPath)) return;
@@ -844,7 +845,9 @@ export class Parser extends DiagnosticEmitter {
       return null;
     }
     this.tryParseSignatureIsSignature = true;
+
     if (!parameters) parameters = [];
+
     return Node.createFunctionType(
       parameters,
       returnType,
@@ -3766,6 +3769,9 @@ export class Parser extends DiagnosticEmitter {
         let identifierText = tn.readIdentifier();
         if (identifierText == "null") return Node.createNullExpression(tn.range()); // special
         let identifier = Node.createIdentifierExpression(identifierText, tn.range(startPos, tn.pos));
+        if (tn.skip(Token.TEMPLATELITERAL)) {
+          return this.parseTemplateLiteral(tn, identifier);
+        }
         if (tn.peek(true) == Token.EQUALS_GREATERTHAN && !tn.nextTokenOnNewLine) {
           return this.parseFunctionExpressionCommon(
             tn,
@@ -3799,11 +3805,18 @@ export class Parser extends DiagnosticEmitter {
       case Token.STRINGLITERAL: {
         return Node.createStringLiteralExpression(tn.readString(), tn.range(startPos, tn.pos));
       }
+      case Token.TEMPLATELITERAL: {
+        return this.parseTemplateLiteral(tn);
+      }
       case Token.INTEGERLITERAL: {
-        return Node.createIntegerLiteralExpression(tn.readInteger(), tn.range(startPos, tn.pos));
+        let value = tn.readInteger();
+        tn.checkForIdentifierStartAfterNumericLiteral();
+        return Node.createIntegerLiteralExpression(value, tn.range(startPos, tn.pos));
       }
       case Token.FLOATLITERAL: {
-        return Node.createFloatLiteralExpression(tn.readFloat(), tn.range(startPos, tn.pos));
+        let value = tn.readFloat();
+        tn.checkForIdentifierStartAfterNumericLiteral();
+        return Node.createFloatLiteralExpression(value, tn.range(startPos, tn.pos));
       }
       // RegexpLiteralExpression
       // note that this also continues on invalid ones so the surrounding AST remains intact
@@ -4068,7 +4081,12 @@ export class Parser extends DiagnosticEmitter {
               return null;
             }
           }
-          expr = this.maybeParseCallExpression(tn, expr, true);
+          if (tn.skip(Token.TEMPLATELITERAL)) {
+            expr = this.parseTemplateLiteral(tn, expr);
+            if (!expr) return null;
+          } else {
+            expr = this.maybeParseCallExpression(tn, expr, true);
+          }
           break;
         }
         // BinaryExpression (right associative)
@@ -4122,6 +4140,31 @@ export class Parser extends DiagnosticEmitter {
       }
     }
     return expr;
+  }
+
+  private parseTemplateLiteral(tn: Tokenizer, tag: Expression | null = null): Expression | null {
+    // at '`': ... '`'
+    var startPos = tag ? tag.range.start : tn.tokenPos;
+    var parts = new Array<string>();
+    var rawParts = new Array<string>();
+    var exprs = new Array<Expression>();
+    parts.push(tn.readString(0, tag != null));
+    rawParts.push(tn.source.text.substring(tn.readStringStart, tn.readStringEnd));
+    while (tn.readingTemplateString) {
+      let expr = this.parseExpression(tn);
+      if (!expr) return null;
+      exprs.push(expr);
+      if (!tn.skip(Token.CLOSEBRACE)) {
+        this.error(
+          DiagnosticCode._0_expected,
+          tn.range(), "}"
+        );
+        return null;
+      }
+      parts.push(tn.readString(CharCode.BACKTICK, tag != null));
+      rawParts.push(tn.source.text.substring(tn.readStringStart, tn.readStringEnd));
+    }
+    return Node.createTemplateLiteralExpression(tag, parts, rawParts, exprs, tn.range(startPos, tn.pos));
   }
 
   private joinPropertyCall(
@@ -4201,16 +4244,19 @@ export class Parser extends DiagnosticEmitter {
           tn.readIdentifier();
           break;
         }
-        case Token.STRINGLITERAL: {
+        case Token.STRINGLITERAL:
+        case Token.TEMPLATELITERAL: {
           tn.readString();
           break;
         }
         case Token.INTEGERLITERAL: {
           tn.readInteger();
+          tn.checkForIdentifierStartAfterNumericLiteral();
           break;
         }
         case Token.FLOATLITERAL: {
           tn.readFloat();
+          tn.checkForIdentifierStartAfterNumericLiteral();
           break;
         }
         case Token.OPENBRACE: {
@@ -4219,6 +4265,7 @@ export class Parser extends DiagnosticEmitter {
         }
       }
     } while (true);
+    tn.readingTemplateString = false;
   }
 
   /** Skips over a block on errors in an attempt to reduce unnecessary diagnostic noise. */
@@ -4255,10 +4302,12 @@ export class Parser extends DiagnosticEmitter {
         }
         case Token.INTEGERLITERAL: {
           tn.readInteger();
+          tn.checkForIdentifierStartAfterNumericLiteral();
           break;
         }
         case Token.FLOATLITERAL: {
           tn.readFloat();
+          tn.checkForIdentifierStartAfterNumericLiteral();
           break;
         }
       }

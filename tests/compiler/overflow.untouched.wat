@@ -2,9 +2,13 @@
  (type $none_=>_none (func))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
+ (global $~lib/memory/__data_end i32 (i32.const 60))
+ (global $~lib/memory/__stack_pointer (mut i32) (i32.const 16444))
+ (global $~lib/memory/__heap_base i32 (i32.const 16444))
  (memory $0 1)
- (data (i32.const 12) ",\00\00\00\01\00\00\00\00\00\00\00\01\00\00\00\16\00\00\00o\00v\00e\00r\00f\00l\00o\00w\00.\00t\00s\00\00\00\00\00\00\00")
+ (data (i32.const 12) ",\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\16\00\00\00o\00v\00e\00r\00f\00l\00o\00w\00.\00t\00s\00\00\00\00\00\00\00")
  (table $0 1 funcref)
+ (elem $0 (i32.const 1))
  (export "memory" (memory $0))
  (start $~start)
  (func $start:overflow
@@ -18,10 +22,7 @@
   i32.add
   local.set $0
   local.get $0
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const -128
   i32.eq
   i32.eqz
@@ -38,10 +39,7 @@
   i32.sub
   local.set $0
   local.get $0
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const 127
   i32.eq
   i32.eqz
@@ -61,10 +59,7 @@
   local.get $2
   local.set $1
   local.get $0
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const -128
   i32.eq
   i32.eqz
@@ -84,10 +79,7 @@
   local.get $2
   local.set $1
   local.get $0
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const 127
   i32.eq
   i32.eqz
@@ -104,10 +96,7 @@
   i32.add
   local.set $0
   local.get $0
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const -128
   i32.eq
   i32.eqz
@@ -124,10 +113,7 @@
   i32.sub
   local.set $0
   local.get $0
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const 127
   i32.eq
   i32.eqz
@@ -145,10 +131,7 @@
   local.tee $0
   local.set $1
   local.get $0
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const -128
   i32.eq
   i32.eqz
@@ -166,10 +149,7 @@
   local.tee $0
   local.set $1
   local.get $0
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const 127
   i32.eq
   i32.eqz
@@ -184,10 +164,7 @@
   local.get $0
   i32.const 1
   i32.add
-  i32.const 24
-  i32.shl
-  i32.const 24
-  i32.shr_s
+  i32.extend8_s
   i32.const -128
   i32.eq
   i32.eqz
@@ -206,10 +183,7 @@
   i32.add
   local.set $1
   local.get $1
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const -32768
   i32.eq
   i32.eqz
@@ -226,10 +200,7 @@
   i32.sub
   local.set $1
   local.get $1
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const 32767
   i32.eq
   i32.eqz
@@ -249,10 +220,7 @@
   local.get $2
   local.set $0
   local.get $1
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const -32768
   i32.eq
   i32.eqz
@@ -272,10 +240,7 @@
   local.get $2
   local.set $0
   local.get $1
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const 32767
   i32.eq
   i32.eqz
@@ -292,10 +257,7 @@
   i32.add
   local.set $1
   local.get $1
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const -32768
   i32.eq
   i32.eqz
@@ -312,10 +274,7 @@
   i32.sub
   local.set $1
   local.get $1
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const 32767
   i32.eq
   i32.eqz
@@ -333,10 +292,7 @@
   local.tee $1
   local.set $0
   local.get $1
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const -32768
   i32.eq
   i32.eqz
@@ -354,10 +310,7 @@
   local.tee $1
   local.set $0
   local.get $1
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const 32767
   i32.eq
   i32.eqz
@@ -372,10 +325,7 @@
   local.get $1
   i32.const 1
   i32.add
-  i32.const 16
-  i32.shl
-  i32.const 16
-  i32.shr_s
+  i32.extend16_s
   i32.const -32768
   i32.eq
   i32.eqz

@@ -1,11 +1,12 @@
 (module
- (type $none_=>_none (func))
  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
+ (type $none_=>_none (func))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
- (memory $0 1)
- (data (i32.const 1036) ",\00\00\00\01\00\00\00\00\00\00\00\01\00\00\00\12\00\00\00m\00e\00m\00s\00e\00t\00.\00t\00s")
  (global $memset/dest (mut i32) (i32.const 0))
+ (memory $0 1)
+ (data (i32.const 1036) ",")
+ (data (i32.const 1048) "\01\00\00\00\12\00\00\00m\00e\00m\00s\00e\00t\00.\00t\00s")
  (export "memory" (memory $0))
  (start $~start)
  (func $memset/memset (param $0 i32) (param $1 i32) (param $2 i32)
@@ -171,8 +172,8 @@
    local.set $2
    local.get $1
    i64.extend_i32_u
-   local.get $1
-   i64.extend_i32_u
+   local.tee $4
+   local.get $4
    i64.const 32
    i64.shl
    i64.or
@@ -207,10 +208,10 @@
    end
   end
  )
- (func $start:memset
-  i32.const 1084
+ (func $~start
+  i32.const 17468
   global.set $memset/dest
-  i32.const 1084
+  i32.const 17468
   i32.const 1
   i32.const 16
   call $memset/memset
@@ -292,8 +293,5 @@
    call $~lib/builtins/abort
    unreachable
   end
- )
- (func $~start
-  call $start:memset
  )
 )

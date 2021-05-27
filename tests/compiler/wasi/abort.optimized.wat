@@ -1,17 +1,18 @@
 (module
  (type $none_=>_none (func))
- (type $i32_=>_none (func (param i32)))
- (type $i32_=>_i32 (func (param i32) (result i32)))
  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
  (type $i32_i32_i32_i32_=>_i32 (func (param i32 i32 i32 i32) (result i32)))
+ (type $i32_=>_none (func (param i32)))
  (import "wasi_snapshot_preview1" "fd_write" (func $~lib/bindings/wasi_snapshot_preview1/fd_write (param i32 i32 i32 i32) (result i32)))
  (import "wasi_snapshot_preview1" "proc_exit" (func $~lib/bindings/wasi_snapshot_preview1/proc_exit (param i32)))
  (memory $0 1)
- (data (i32.const 1036) ",\00\00\00\01\00\00\00\00\00\00\00\01\00\00\00\16\00\00\00t\00h\00e\00 \00m\00e\00s\00s\00a\00g\00e")
- (data (i32.const 1084) ",\00\00\00\01\00\00\00\00\00\00\00\01\00\00\00\1a\00\00\00w\00a\00s\00i\00/\00a\00b\00o\00r\00t\00.\00t\00s")
- (export "_start" (func $~start))
- (export "memory" (memory $0))
+ (data (i32.const 1036) ",")
+ (data (i32.const 1048) "\01\00\00\00\16\00\00\00t\00h\00e\00 \00m\00e\00s\00s\00a\00g\00e")
+ (data (i32.const 1084) ",")
+ (data (i32.const 1096) "\01\00\00\00\1a\00\00\00w\00a\00s\00i\00/\00a\00b\00o\00r\00t\00.\00t\00s")
  (export "test" (func $wasi/abort/test))
+ (export "memory" (memory $0))
+ (export "_start" (func $~start))
  (func $~lib/string/String.UTF8.encodeUnsafe (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
@@ -184,57 +185,14 @@
   local.get $2
   i32.sub
  )
- (func $~lib/util/number/decimalCount32 (param $0 i32) (result i32)
-  local.get $0
-  i32.const 10
-  i32.ge_u
-  i32.const 1
-  i32.add
-  local.get $0
-  i32.const 10000
-  i32.ge_u
-  i32.const 3
-  i32.add
-  local.get $0
-  i32.const 1000
-  i32.ge_u
-  i32.add
-  local.get $0
-  i32.const 100
-  i32.lt_u
-  select
-  local.get $0
-  i32.const 1000000
-  i32.ge_u
-  i32.const 6
-  i32.add
-  local.get $0
-  i32.const 1000000000
-  i32.ge_u
-  i32.const 8
-  i32.add
-  local.get $0
-  i32.const 100000000
-  i32.ge_u
-  i32.add
-  local.get $0
-  i32.const 10000000
-  i32.lt_u
-  select
-  local.get $0
-  i32.const 100000
-  i32.lt_u
-  select
- )
- (func $~lib/wasi/index/abort
+ (func $wasi/abort/test
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
-  (local $3 i32)
   i32.const 3
-  local.set $2
-  i32.const 4
   local.set $1
+  i32.const 4
+  local.set $2
   i32.const 0
   i32.const 12
   i32.store
@@ -268,46 +226,11 @@
   local.tee $0
   i32.const 40
   i32.store8
-  i32.const 4
-  call $~lib/util/number/decimalCount32
-  local.tee $3
   local.get $0
-  i32.const 1
-  i32.add
+  i32.const 2
   i32.add
   local.set $0
   loop $do-continue|0
-   local.get $0
-   i32.const 1
-   i32.sub
-   local.tee $0
-   local.get $1
-   i32.const 10
-   i32.rem_u
-   i32.const 48
-   i32.add
-   i32.store8
-   local.get $1
-   i32.const 10
-   i32.div_u
-   local.tee $1
-   br_if $do-continue|0
-  end
-  local.get $0
-  local.get $3
-  i32.add
-  local.tee $0
-  i32.const 58
-  i32.store8
-  i32.const 3
-  call $~lib/util/number/decimalCount32
-  local.tee $1
-  local.get $0
-  i32.const 1
-  i32.add
-  i32.add
-  local.set $0
-  loop $do-continue|1
    local.get $0
    i32.const 1
    i32.sub
@@ -322,18 +245,45 @@
    i32.const 10
    i32.div_u
    local.tee $2
+   br_if $do-continue|0
+  end
+  local.get $0
+  i32.const 1
+  i32.add
+  local.tee $0
+  i32.const 58
+  i32.store8
+  local.get $0
+  i32.const 2
+  i32.add
+  local.set $0
+  loop $do-continue|1
+   local.get $0
+   i32.const 1
+   i32.sub
+   local.tee $0
+   local.get $1
+   i32.const 10
+   i32.rem_u
+   i32.const 48
+   i32.add
+   i32.store8
+   local.get $1
+   i32.const 10
+   i32.div_u
+   local.tee $1
    br_if $do-continue|1
   end
   local.get $0
-  local.get $1
+  i32.const 1
   i32.add
   local.tee $0
   i32.const 2601
   i32.store16
   i32.const 4
   local.get $0
-  i32.const -10
-  i32.add
+  i32.const 10
+  i32.sub
   i32.store
   i32.const 2
   i32.const 0
@@ -343,9 +293,6 @@
   drop
   i32.const 255
   call $~lib/bindings/wasi_snapshot_preview1/proc_exit
- )
- (func $wasi/abort/test
-  call $~lib/wasi/index/abort
   unreachable
  )
  (func $~start

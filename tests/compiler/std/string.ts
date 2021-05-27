@@ -13,15 +13,23 @@ assert("\xDFab" == "ßab");
 
 assert(str.length == 16);
 assert(str.charCodeAt(0) == 0x68);
+assert(str.codePointAt(1) == 105);
+assert(str.at(15) == str.charAt(15));
+assert(str.at(-1) == str.charAt(str.length - 1));
+assert(str.at(-str.length) == "h");
 
 assert(!!"" == false);
 assert(!!"\0" == true);
 assert(!!"a" == true);
 
 assert(String.fromCharCode(0) == "\0");
+assert(String.fromCharCode(65600) == "@");
 assert(String.fromCharCode(54) == "6");
 assert(String.fromCharCode(0x10000 + 54) == "6");
 assert(String.fromCharCode(0xD800, 0xDF00) == "𐌀");
+assert(String.fromCharCodes([0, 54]) == "\06");
+assert(String.fromCharCodes([65, 66, 67]) == "ABC");
+assert(String.fromCharCodes([0xD834, 0xDF06, 0x61, 0xD834, 0xDF07]) == "\uD834\uDF06a\uD834\uDF07");
 
 assert(String.fromCodePoint(0) == "\0");
 assert(String.fromCodePoint(54) == "6");
@@ -338,6 +346,8 @@ assert(parseFloat(" \t\n\r.1") == 0.1);
 }
 assert("" == "");
 // @ts-ignore
+assert(nullStr == null);
+// @ts-ignore
 assert("" != nullStr);
 // @ts-ignore
 assert(nullStr != "");
@@ -362,11 +372,6 @@ assert("ba" > "a");
 assert("ba" >= "aa");
 assert("ba" > "ab");
 assert(!("ba" < "ab"));
-
-// @ts-ignore
-assert(!("b" < nullStr));
-// @ts-ignore
-assert(!(nullStr < "b"));
 
 assert("abc" > "");
 assert("" < "abc");
@@ -767,6 +772,14 @@ assert(dtoa(1.1e+128) == "1.1e+128");
 assert(dtoa(1.1e-64) == "1.1e-64");
 assert(dtoa(0.000035689) == "0.000035689");
 
+
+// concat
+
+assert("Hello ".concat("World") == "Hello World");
+assert("".concat("bar") == "bar");
+assert("bar".concat("") == "bar");
+assert("".concat("") == "");
+
 // assert(dtoa(f32.MAX_VALUE) == "3.4028234663852886e+38"); // FIXME
 // assert(dtoa(f32.EPSILON) == "1.1920928955078125e-7"); // FIXME
 
@@ -776,4 +789,7 @@ export function getString(): string {
 
 // Unleak globals
 
-__release(changetype<usize>(str));
+str = changetype<string>(0);
+
+__stack_pointer = __heap_base;
+__collect();

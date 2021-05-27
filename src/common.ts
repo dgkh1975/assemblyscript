@@ -125,8 +125,10 @@ export namespace CommonNames {
   export const v128 = "v128";
   export const funcref = "funcref";
   export const externref = "externref";
-  export const exnref = "exnref";
   export const anyref = "anyref";
+  export const eqref = "eqref";
+  export const i31ref = "i31ref";
+  export const dataref = "dataref";
   export const i8x16 = "i8x16";
   export const u8x16 = "u8x16";
   export const i16x8 = "i16x8";
@@ -162,6 +164,7 @@ export namespace CommonNames {
   export const ASC_OPTIMIZE_LEVEL = "ASC_OPTIMIZE_LEVEL";
   export const ASC_SHRINK_LEVEL = "ASC_SHRINK_LEVEL";
   export const ASC_LOW_MEMORY_LIMIT = "ASC_LOW_MEMORY_LIMIT";
+  export const ASC_EXPORT_RUNTIME = "ASC_EXPORT_RUNTIME";
   export const ASC_WASI = "ASC_WASI";
   export const ASC_FEATURE_SIGN_EXTENSION = "ASC_FEATURE_SIGN_EXTENSION";
   export const ASC_FEATURE_MUTABLE_GLOBALS = "ASC_FEATURE_MUTABLE_GLOBALS";
@@ -175,6 +178,9 @@ export namespace CommonNames {
   export const ASC_FEATURE_MULTI_VALUE = "ASC_FEATURE_MULTI_VALUE";
   export const ASC_FEATURE_GC = "ASC_FEATURE_GC";
   export const ASC_FEATURE_MEMORY64 = "ASC_FEATURE_MEMORY64";
+  export const ASC_VERSION_MAJOR = "ASC_VERSION_MAJOR";
+  export const ASC_VERSION_MINOR = "ASC_VERSION_MINOR";
+  export const ASC_VERSION_PATCH = "ASC_VERSION_PATCH";
   // classes
   export const I8 = "I8";
   export const I16 = "I16";
@@ -192,9 +198,12 @@ export namespace CommonNames {
   export const V128 = "V128";
   export const Funcref = "Funcref";
   export const Externref = "Externref";
-  export const Exnref = "Exnref";
   export const Anyref = "Anyref";
+  export const Eqref = "Eqref";
+  export const I31ref = "I31ref";
+  export const Dataref = "Dataref";
   export const String = "String";
+  export const Object = "Object";
   export const Array = "Array";
   export const StaticArray = "StaticArray";
   export const Set = "Set";
@@ -217,6 +226,7 @@ export namespace CommonNames {
   export const Uint64Array = "Uint64Array";
   export const Float32Array = "Float32Array";
   export const Float64Array = "Float64Array";
+  export const TemplateStringsArray = "TemplateStringsArray";
   export const Error = "Error";
   // runtime
   export const abort = "abort";
@@ -231,8 +241,7 @@ export namespace CommonNames {
   export const free = "__free";
   export const new_ = "__new";
   export const renew = "__renew";
-  export const retain = "__retain";
-  export const release = "__release";
+  export const link = "__link";
   export const collect = "__collect";
   export const typeinfo = "__typeinfo";
   export const instanceof_ = "__instanceof";

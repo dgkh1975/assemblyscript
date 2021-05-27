@@ -306,7 +306,7 @@ export class Resolver extends DiagnosticEmitter {
           typeParameterNodes,
           typeArgumentNodes,
           ctxElement,
-          ctxTypes = uniqueMap(ctxTypes), // inherit
+          ctxTypes = uniqueMap(ctxTypes), // update
           node,
           reportMode
         );
@@ -644,7 +644,7 @@ export class Resolver extends DiagnosticEmitter {
     typeArgumentNodes: TypeNode[] | null,
     /** Contextual element. */
     ctxElement: Element,
-    /** Contextual types, i.e. `T`. */
+    /** Contextual types, i.e. `T`. Updated in place with the new set of contextual types. */
     ctxTypes: Map<string,Type> = uniqueMap<string,Type>(),
     /** Alternative report node in case of empty type arguments. */
     alternativeReportNode: Node | null = null,
@@ -675,18 +675,20 @@ export class Resolver extends DiagnosticEmitter {
       return null;
     }
     var typeArguments = new Array<Type>(maxParameterCount);
+    var oldCtxTypes = uniqueMap<string,Type>(ctxTypes);
+    ctxTypes.clear();
     for (let i = 0; i < maxParameterCount; ++i) {
       let type = i < argumentCount
         ? this.resolveType( // reports
             typeArgumentNodes![i],
             ctxElement,
-            ctxTypes,
+            oldCtxTypes, // update
             reportMode
           )
         : this.resolveType( // reports
             assert(typeParameters[i].defaultType),
             ctxElement,
-            ctxTypes,
+            uniqueMap<string,Type>(ctxTypes), // don't update
             reportMode
           );
       if (!type) return null;
@@ -768,11 +770,19 @@ export class Resolver extends DiagnosticEmitter {
       // apply concrete types to the generic function signature
       let resolvedTypeArguments = new Array<Type>(numTypeParameters);
       for (let i = 0; i < numTypeParameters; ++i) {
-        let name = typeParameterNodes[i].name.text;
+        let typeParameterNode = typeParameterNodes[i];
+        let name = typeParameterNode.name.text;
         if (contextualTypeArguments.has(name)) {
           let inferredType = assert(contextualTypeArguments.get(name));
           if (inferredType != Type.auto) {
             resolvedTypeArguments[i] = inferredType;
+            continue;
+          }
+          let defaultType = typeParameterNode.defaultType;
+          if (defaultType) {
+            let resolvedDefaultType = this.resolveType(defaultType, ctxFlow.actualFunction, contextualTypeArguments, reportMode);
+            if (!resolvedDefaultType) return null;
+            resolvedTypeArguments[i] = resolvedDefaultType;
             continue;
           }
         }
@@ -867,7 +877,6 @@ export class Resolver extends DiagnosticEmitter {
     }
     if (isTypedElement(kind)) {
       let type = (<TypedElement>element).type;
-      assert(type != Type.void);
       let classReference = type.getClassOrWrapper(this.program);
       if (classReference) {
         let wrappedType = classReference.wrappedType;
@@ -1150,6 +1159,14 @@ export class Resolver extends DiagnosticEmitter {
       this.currentThisExpression = null;
       this.currentElementExpression = null;
       return element;
+    }
+    var outerFlow = ctxFlow.outer;
+    if (outerFlow) {
+      if (element = outerFlow.lookup(name)) {
+        this.currentThisExpression = null;
+        this.currentElementExpression = null;
+        return element;
+      }
     }
     if (element = ctxElement.lookup(name)) {
       this.currentThisExpression = null;
@@ -2204,7 +2221,8 @@ export class Resolver extends DiagnosticEmitter {
         let fltType = ctxType == Type.f32 ? Type.f32 : Type.f64;
         return assert(fltType.getClassOrWrapper(this.program));
       }
-      case LiteralKind.STRING: {
+      case LiteralKind.STRING:
+      case LiteralKind.TEMPLATE: {
         return this.program.stringInstance;
       }
       case LiteralKind.ARRAY: {
@@ -2238,10 +2256,12 @@ export class Resolver extends DiagnosticEmitter {
           if (numNullLiterals == length) { // all nulls infers as usize
             elementType = this.program.options.usizeType;
           } else {
-            this.error(
-              DiagnosticCode.The_type_argument_for_type_parameter_0_cannot_be_inferred_from_the_usage_Consider_specifying_the_type_arguments_explicitly,
-              node.range, "T"
-            );
+            if (reportMode == ReportMode.REPORT) {
+              this.error(
+                DiagnosticCode.The_type_argument_for_type_parameter_0_cannot_be_inferred_from_the_usage_Consider_specifying_the_type_arguments_explicitly,
+                node.range, "T"
+              );
+            }
             return null;
           }
         }
@@ -2252,6 +2272,16 @@ export class Resolver extends DiagnosticEmitter {
           elementType = elementType.asNullable();
         }
         return assert(this.resolveClass(this.program.arrayPrototype, [ elementType ]));
+      }
+      case LiteralKind.OBJECT: {
+        if (ctxType.isClass) return ctxType.classReference;
+        if (reportMode == ReportMode.REPORT) {
+          this.error(
+            DiagnosticCode.Expression_cannot_be_represented_by_a_type,
+            node.range
+          );
+        }
+        return null;
       }
     }
     assert(false);
@@ -2787,7 +2817,7 @@ export class Resolver extends DiagnosticEmitter {
         assert(prototype.typeParameterNodes),
         typeArgumentNodes,
         ctxElement,
-        ctxTypes,
+        ctxTypes, // update
         reportNode,
         reportMode
       );
@@ -3263,7 +3293,7 @@ export class Resolver extends DiagnosticEmitter {
         assert(prototype.typeParameterNodes), // must be present if generic
         typeArgumentNodes,
         ctxElement,
-        ctxTypes,
+        ctxTypes, // update
         reportNode,
         reportMode
       );

@@ -1,6 +1,8 @@
 // can use externref as a parameter or return type
 
 export declare function external(a: externref): externref;
+export declare function somethingReal(): externref;
+export declare function somethingNull(): externref;
 
 export function internal(a: externref): externref {
   const b = external(a);
@@ -26,6 +28,44 @@ console.log(someObject);
 console.log(someKey);
 console.log(Reflect.get(someObject, someKey));
 
+// Truthiness conversion
+if(!somethingReal()) {
+  assert(false);
+}
+if(!somethingNull()) {
+  // nop
+} else {
+  assert(false);
+}
+if(somethingReal()) {
+  // nop
+} else {
+  assert(false);
+}
+if(somethingNull()) {
+  assert(false);
+}
+
+// Explicit null checks (don’t work yet)
+/*
+if(somethingReal() !== null) {
+  // nop
+} else {
+  assert(false);
+}
+if(somethingReal() === null) {
+  assert(false);
+}
+if(somethingNull() === null) {
+  // nop
+} else {
+  assert(false);
+}
+if(somethingNull() !== null) {
+  assert(false);
+}
+*/
+
 // can represent and recognize 'null'
 
 var funcGlobal: funcref;
@@ -41,13 +81,6 @@ externGlobal = null;
 assert(!externGlobal);
 var externGlobalInit: externref = null;
 assert(!externGlobalInit);
-
-var exnGlobal: exnref;
-assert(!exnGlobal);
-exnGlobal = null;
-assert(!exnGlobal);
-var exnGlobalInit: exnref = null;
-assert(!exnGlobalInit);
 
 var anyGlobal: anyref;
 assert(!anyGlobal);
@@ -66,7 +99,6 @@ function testLocal<T>(): void {
 }
 testLocal<funcref>();
 testLocal<externref>();
-testLocal<exnref>();
 testLocal<anyref>();
 
 // funcref can represent function references
@@ -84,8 +116,3 @@ assert(otherFuncGlobal);
 // can assign any reference type to anyref
 
 anyGlobal = funcGlobal;
-anyGlobal = externGlobal;
-anyGlobal = exnGlobal;
-
-// TODO: Not implemented: ref.cast
-// exnGlobal = <exnref>anyGlobal;
